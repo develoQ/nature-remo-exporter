@@ -26,6 +26,7 @@ func main() {
 	flag.Parse()
 
 	var devices []nature.Device
+	var appliances []nature.Appliance
 
 	mu := http.NewServeMux()
 	mu.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
@@ -84,6 +85,24 @@ func main() {
 				d.NewestEvents.Movement.Value,
 			)
 		}
+		
+		fmt.Fprintf(w, "# HELP natureremo_appliance Appliance\n")
+		fmt.Fprintf(w, "# TYPE natureremo_appliance gauge\n")
+		for _, a := range appliances {
+			for _, p := range a.Properties {
+				val, _ := strconv.ParseInt(p.Value, 16, 64)
+				fmt.Fprintf(
+					w,
+					"natureremo_appliance_%v{name=%q,firmware_version=%q,mac_address=%q,serial_number=%q} %d\n",
+					p.EPC,
+					a.Name,
+					a.Device.FirmwareVersion,
+					a.Device.MacAddress,
+					a.Device.SerialNumber,
+					val,
+				)
+			}
+		}
 	})
 
 	var srv http.Server
@@ -107,8 +126,12 @@ func main() {
 		t := time.NewTicker(60 * time.Second)
 		defer t.Stop()
 
-		if result, _ := c.GetDevices(); result != nil {
-			devices = result
+		if resultDevices, _ := c.GetDevices(); resultDevices != nil{
+			devices = resultDevices
+		}
+
+		if resultAppliances, _ := c.GetAppliances(); resultAppliances != nil {
+			appliances = resultAppliances
 		}
 		for {
 			select {
@@ -116,8 +139,12 @@ func main() {
 				t.Stop()
 				return
 			case <-t.C:
-				if result, _ := c.GetDevices(); result != nil {
-					devices = result
+				if resultDevices, _ := c.GetDevices(); resultDevices != nil {
+					devices = resultDevices
+				}
+
+				if resultAppliances, _ := c.GetAppliances(); resultAppliances != nil {
+					appliances = resultAppliances
 				}
 			}
 		}

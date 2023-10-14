@@ -44,6 +44,16 @@ https://swagger.nature.global/#/default/get_1_devices
 
 > The val of "mo" is always 1 and when movement event is captured created_at is updated.
 
+### `natureremo_appliance_d3{name,firmware_version,mac_address,serial_number}` (gauge)
+### `natureremo_appliance_d7{name,firmware_version,mac_address,serial_number}` (gauge)
+### `natureremo_appliance_e0{name,firmware_version,mac_address,serial_number}` (gauge)
+### `natureremo_appliance_e1{name,firmware_version,mac_address,serial_number}` (gauge)
+### `natureremo_appliance_e3{name,firmware_version,mac_address,serial_number}` (gauge)
+### `natureremo_appliance_e7{name,firmware_version,mac_address,serial_number}` (gauge)
+
+https://developer.nature.global/docs/how-to-calculate-energy-data-from-smart-meter-values/#スマートメーターの各epcの解説
+
+
 ## References
 
 - [Writing exporters | Prometheus](https://prometheus.io/docs/instrumenting/writing_exporters/)
